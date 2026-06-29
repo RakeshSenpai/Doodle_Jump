@@ -3,5 +3,5 @@ body{
 }
 
 #board{
-    background: green;
+    background-image: url(assets/images/doodlejumpbg.png);
 }
