@@ -22,6 +22,15 @@ let platformWidth = 60;
 let platformHeight = 18;
 let platformImg;
 
+//Game Physics
+
+let velocityX = 0;
+
+let velocityY = 0;//doodler jump speed
+let initialVelocityY = -8; // starting velo y
+let gravity = 0.4;
+
+
 let doodler = {
     img: null,
     x: doodlerX,
@@ -47,7 +56,7 @@ window.onload = function() {
         doodlerLeftImage.src = 'assets/images/doodler-left.png';
 
         //platform
-
+        velocityY = initialVelocityY;
         platformImg = new Image()
         platformImg.src = 'assets/images/platform.png'
         placePlatForms()
@@ -56,9 +65,7 @@ window.onload = function() {
     }
 }
 
-//Game Physics
 
-let velocityX = 0;
 
 function update(){
     requestAnimationFrame(update)
@@ -73,14 +80,22 @@ function update(){
     else if(doodler.x + doodler.width < 0){
         doodler.x = boardWidth
     }
+
+    velocityY += gravity;
+    doodler.y += velocityY
     context.drawImage(doodler.img, doodler.x, doodler.y, doodler.width, doodler.height)
 
     for(let i = 0; i < platformArray.length; i++){
         let platform = platformArray[i];
+        if(detectCollision(doodler, platform) && velocityY >= 0 ){
+            velocityY = initialVelocityY
+        }
         context.drawImage(platform.img, platform.x, platform.y, platform.width, platform.height)
     }
 }
 
+
+//move doodler
 function moveDoodler(e){
     if(e.code == 'ArrowRight' || e.code == 'KeyD'){
         velocityX = 4;
@@ -105,4 +120,11 @@ function placePlatForms(){
     }
 
     platformArray.push(platform)
+}
+
+function detectCollision(a, b){
+    return a.x < b.x + b.width && // a's top left corner doesnot reach b's top right corner
+           a.x + a.width > b.width && //a's top right corner passes b'r top left corner
+           a.y < b.y + b.height && //a's top left corner doesn't reach b's bottom left corner
+           a.y + a.height > b.y; // a's bottom left corner passes b's top left corner
 }
