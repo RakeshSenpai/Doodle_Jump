@@ -87,10 +87,18 @@ function update(){
 
     for(let i = 0; i < platformArray.length; i++){
         let platform = platformArray[i];
+        if(velocityY < 0 && doodler.y < boardHeight*3/4){
+            platform.y -= initialVelocityY;
+        }
         if(detectCollision(doodler, platform) && velocityY >= 0 ){
             velocityY = initialVelocityY
         }
         context.drawImage(platform.img, platform.x, platform.y, platform.width, platform.height)
+    }
+
+    while(platformArray.length > 0 && platformArray[0].y >= boardHeight){
+        platformArray.shift() //removes first element from the array
+        newPlatForms()
     }
 }
 
@@ -109,7 +117,7 @@ function moveDoodler(e){
 } 
 
 function placePlatForms(){
-    platformArray = []
+    platformArray = [];
 
     let platform = {
         img: platformImg,
@@ -118,13 +126,41 @@ function placePlatForms(){
         width: platformWidth,
         height: platformHeight
     }
+    platformArray.push(platform)
+
+
+    for(let i = 0; i < 6; i++){
+        let randomX = Math.floor(Math.random() * boardWidth*3/4)
+        let platform = {
+            img: platformImg,
+            x: randomX,
+            y : boardHeight - 75*i - 150,
+            width: platformWidth,
+            height: platformHeight
+        }
+
+    platformArray.push(platform)
+
+    }
+
+}
+
+function newPlatForms(){
+        let randomX = Math.floor(Math.random() * boardWidth*3/4)
+        let platform = {
+            img: platformImg,
+            x: randomX,
+            y : -platformHeight,
+            width: platformWidth,
+            height: platformHeight
+        }
 
     platformArray.push(platform)
 }
 
 function detectCollision(a, b){
     return a.x < b.x + b.width && // a's top left corner doesnot reach b's top right corner
-           a.x + a.width > b.width && //a's top right corner passes b'r top left corner
+           a.x + a.width > b.x && //a's top right corner passes b'r top left corner
            a.y < b.y + b.height && //a's top left corner doesn't reach b's bottom left corner
            a.y + a.height > b.y; // a's bottom left corner passes b's top left corner
 }
