@@ -121,7 +121,7 @@ function update(){
     context.fillText(score, 5, 20);
 
     if(gameOver){
-        context.fillText("Game over: presee 'Space' to restart the game");
+        context.fillText("Game over: presee 'Space' to restart the game", boardWidth/7, boardHeight*7/8);
     }
 }
 
@@ -136,6 +136,24 @@ function moveDoodler(e){
     else if(e.code == 'ArrowLeft' || e.code == 'KeyA'){
         velocityX = -4
         doodler.img = doodlerLeftImage;
+    }
+
+    else if(e.code == 'Space' && gameOver){
+            doodler = {
+            img: doodlerRightImage,
+            x: doodlerX,
+            y: doodlerY,
+            width: doodlerWidth,
+            height:doodlerHeight
+        }
+
+        velocityX = 0;
+        velocityY = initialVelocityY;
+        score = 0;
+        maxScore = 0;
+        gameOver = false
+        placePlatForms();
+
     }
 } 
 
