@@ -22,6 +22,9 @@ let platformWidth = 60;
 let platformHeight = 18;
 let platformImg;
 
+let score = 0;
+let maxScore = 0;
+let gameOver = false;
 //Game Physics
 
 let velocityX = 0;
@@ -69,6 +72,9 @@ window.onload = function() {
 
 function update(){
     requestAnimationFrame(update)
+    if(gameOver){
+        return;
+    }
     context.clearRect(0, 0, board.width, board.height)
 
     //doodler 
@@ -83,7 +89,13 @@ function update(){
 
     velocityY += gravity;
     doodler.y += velocityY
+
+    if(doodler.y > board.height){
+        gameOver = true;
+    }
     context.drawImage(doodler.img, doodler.x, doodler.y, doodler.width, doodler.height)
+
+    //platform
 
     for(let i = 0; i < platformArray.length; i++){
         let platform = platformArray[i];
@@ -99,6 +111,17 @@ function update(){
     while(platformArray.length > 0 && platformArray[0].y >= boardHeight){
         platformArray.shift() //removes first element from the array
         newPlatForms()
+    }
+
+    //score
+
+    updateScore()
+    context.fillStyle = 'black';
+    context.font = '20px sans-serif';
+    context.fillText(score, 5, 20);
+
+    if(gameOver){
+        context.fillText("Game over: presee 'Space' to restart the game");
     }
 }
 
@@ -163,4 +186,18 @@ function detectCollision(a, b){
            a.x + a.width > b.x && //a's top right corner passes b'r top left corner
            a.y < b.y + b.height && //a's top left corner doesn't reach b's bottom left corner
            a.y + a.height > b.y; // a's bottom left corner passes b's top left corner
+}
+
+function updateScore(){
+    let points = Math.floor(50*Math.random())
+    if(velocityY < 0){
+        maxScore += points;
+
+        if(score < maxScore){
+            score = maxScore;
+        }
+    }
+    else if(velocityY >= 0){
+        maxScore -= points
+    }
 }
